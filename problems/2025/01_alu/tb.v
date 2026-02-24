@@ -1,4 +1,5 @@
 `timescale 1ns/1ps
+`include "alu_ops.vh"
 
 module tb_alu;
 
