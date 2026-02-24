@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 
 module copy #(parameter N = 12,
-                  parameter M = 32
+              parameter M = 32
 )(
     input  wire i_x,
     output wire o_y
