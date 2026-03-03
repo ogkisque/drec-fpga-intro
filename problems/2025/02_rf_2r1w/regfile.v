@@ -1,4 +1,4 @@
-module reg_file_2r1w (
+module reg_file (
     input  wire        clk,
 
     input  wire [4:0]  i_rd_addr0,

@@ -1,4 +1,4 @@
-module shift_reg_8bit (
+module shift_reg (
     input  wire       clk,
     input  wire       i_en,
     input  wire       i_load,

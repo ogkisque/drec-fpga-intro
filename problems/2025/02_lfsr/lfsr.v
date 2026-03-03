@@ -1,4 +1,4 @@
-module lfsr_8bit (
+module lfsr (
     input  wire       clk,
     input  wire       i_en,
     output wire [7:0] o_data
