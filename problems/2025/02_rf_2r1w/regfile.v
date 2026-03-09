@@ -12,14 +12,14 @@ module reg_file (
     input  wire        i_wr_en
 );
 
-    reg [31:0] r [31:0];
+    reg [31:0] data [31:0];
 
-    assign o_rd_data0 = r[i_rd_addr0];
-    assign o_rd_data1 = r[i_rd_addr1];
+    assign o_rd_data0 = data[i_rd_addr0];
+    assign o_rd_data1 = data[i_rd_addr1];
 
     always @(posedge clk) begin
         if (i_wr_en) begin
-            r[i_wr_addr] <= i_wr_data;
+            data[i_wr_addr] <= i_wr_data;
         end
     end
 

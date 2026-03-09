@@ -3,7 +3,7 @@ module fifo #(
     parameter integer ADDR_WIDTH = 4
 )(
     input  wire                  clk,
-    input  wire                  rst,
+    input  wire                  rst_n,
     input  wire                  i_wr_en,
     input  wire                  i_rd_en,
     input  wire [DATA_WIDTH-1:0] i_wr_data,
@@ -13,7 +13,7 @@ module fifo #(
     output reg  [ADDR_WIDTH:0]   o_count
 );
 
-    localparam integer DEPTH = (1 << ADDR_WIDTH);
+    localparam DEPTH = (1 << ADDR_WIDTH);
 
     reg [DATA_WIDTH-1:0] mem [DEPTH-1:0];
     reg [ADDR_WIDTH-1:0] wr_ptr;
@@ -28,11 +28,11 @@ module fifo #(
     wire do_read;
     assign do_read = i_rd_en && !o_empty;
 
-    always @(posedge clk) begin
-        if (rst) begin
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
             wr_ptr   <= {ADDR_WIDTH{1'b0}};
             rd_ptr   <= {ADDR_WIDTH{1'b0}};
-            o_count  <= {(ADDR_WIDTH+1){1'b0}};
+            o_count  <= {(ADDR_WIDTH + 1){1'b0}};
             o_rd_data <= {DATA_WIDTH{1'b0}};
         end
         else begin
@@ -49,7 +49,7 @@ module fifo #(
             case ({do_write, do_read})
                 2'b10: o_count <= o_count + 1'b1;
                 2'b01: o_count <= o_count - 1'b1;
-                default: o_count <= o_count;
+                default: ;
             endcase
         end
     end

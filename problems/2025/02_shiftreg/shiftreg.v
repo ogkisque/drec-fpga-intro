@@ -6,16 +6,16 @@ module shift_reg (
     output wire       o_bit
 );
 
-    reg [7:0] r_shift;
-    assign o_bit = r_shift[7];
+    reg [7:0] data;
+    assign o_bit = data[7];
 
     always @(posedge clk) begin
         if (i_en) begin
             if (i_load) begin
-                r_shift <= i_data;
+                data <= i_data;
             end
             else begin
-                r_shift <= {r_shift[6:0], 1'b0};
+                data <= {data[6:0], 1'b0};
             end
         end
     end
