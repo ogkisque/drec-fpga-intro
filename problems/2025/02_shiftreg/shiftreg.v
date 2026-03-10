@@ -1,9 +1,10 @@
 module shift_reg (
-    input  wire       clk,
-    input  wire       i_en,
-    input  wire       i_load,
-    input  wire [7:0] i_data,
-    output wire       o_bit
+    input wire clk,
+    input wire i_en,
+    input wire i_load,
+    input wire [7:0] i_data,
+    input wire i_bit,
+    output wire o_bit
 );
 
     reg [7:0] data;
@@ -15,7 +16,7 @@ module shift_reg (
                 data <= i_data;
             end
             else begin
-                data <= {data[6:0], 1'b0};
+                data <= {data[6:0], i_bit};
             end
         end
     end
