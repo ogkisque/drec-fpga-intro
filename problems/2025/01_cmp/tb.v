@@ -3,14 +3,14 @@
 
 module tb_branch_unit;
 
-    reg  [31:0] i_a;
-    reg  [31:0] i_b;
-    reg  [2:0]  cmp_op;
-    wire        taken;
+    reg [31:0] i_a;
+    reg [31:0] i_b;
+    reg [2:0] cmp_op;
+    wire taken;
 
-    reg         exp;
-    reg  [31:0] test_count;
-    reg  [31:0] err_count;
+    reg exp;
+    reg [31:0] test_count;
+    reg [31:0] err_count;
 
     branch_unit branch_unit_mod (
         .i_a   (i_a),

@@ -1,6 +1,6 @@
 module fp16mul (
-    input  [15:0] i_a,
-    input  [15:0] i_b,
+    input [15:0] i_a,
+    input [15:0] i_b,
     output reg [15:0] o_res
 );
 
@@ -16,12 +16,16 @@ module fp16mul (
     reg [10:0] ma, mb;
     reg [21:0] m_tmp;
 
-    reg [5:0]  exp_res;
+    reg signed [6:0] exp_res;
     reg [10:0] mant_res;
 
     always @(*) begin
-        sa = i_a[15]; ea = i_a[14:10]; fa = i_a[9:0];
-        sb = i_b[15]; eb = i_b[14:10]; fb = i_b[9:0];
+        sa = i_a[15];
+        ea = i_a[14:10];
+        fa = i_a[9:0];
+        sb = i_b[15];
+        eb = i_b[14:10];
+        fb = i_b[9:0];
         sr = sa ^ sb;
 
         a_is_zero = (ea == 5'd0)  && (fa == 10'd0);
@@ -51,23 +55,23 @@ module fp16mul (
             mb   = {1'b1, fb};
             m_tmp = ma * mb;
 
-            exp_res = ea + eb - 5'd15;
+            exp_res = $signed({1'b0, ea}) + $signed({1'b0, eb}) - 7'd15;
 
             if (m_tmp[21]) begin
                 // [2.0, 4.0)
                 mant_res  = m_tmp[21:11];
-                exp_res = exp_res + 6'd1;
+                exp_res = exp_res + 7'd1;
             end else begin
                 // [1.0, 2.0)
                 mant_res  = m_tmp[20:10];
             end
 
-            if (exp_res >= 6'd31) begin
+            if (exp_res >= 7'd31) begin
                 o_res = {sr, 5'h1F, 10'd0};
-            end else if (exp_res <= 6'd0) begin
+            end else if (exp_res <= 0) begin
                 o_res = {sr, 5'd0, 10'd0};
             end else begin
-                o_res    = {sr, exp_res[4:0], mant_res[9:0]};
+                o_res = {sr, exp_res[4:0], mant_res[9:0]};
             end
         end
     end

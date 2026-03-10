@@ -1,8 +1,7 @@
 `timescale 1ns/1ps
 
-module copy #(parameter N = 12,
-              parameter M = 32
-)(
+module copy
+(
     input  wire i_x,
     output wire o_y
 );
@@ -26,7 +25,7 @@ module sign_ext_struct #(parameter N = 12,
 
     generate
         for (i = N; i < M; i = i + 1) begin : gen_hi
-            copy low(.i_x(i_x[N - 1]), .o_y(o_y[i]));
+            copy hi(.i_x(i_x[N - 1]), .o_y(o_y[i]));
         end
     endgenerate
 

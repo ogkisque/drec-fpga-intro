@@ -2,16 +2,16 @@
 
 module tb_mux4;
 
-    reg  [31:0] i_d0;
-    reg  [31:0] i_d1;
-    reg  [31:0] i_d2;
-    reg  [31:0] i_d3;
-    reg  [1:0]  i_sel;
+    reg [31:0] i_d0;
+    reg [31:0] i_d1;
+    reg [31:0] i_d2;
+    reg [31:0] i_d3;
+    reg [1:0]  i_sel;
     wire [31:0] o_y;
 
-    reg  [31:0] exp;
-    reg  [31:0] test_count;
-    reg  [31:0] err_count;
+    reg [31:0] exp;
+    reg [31:0] test_count;
+    reg [31:0] err_count;
 
     mux4 #(.WIDTH(32))
     mux4_mod (
@@ -19,8 +19,8 @@ module tb_mux4;
         .i1 (i_d1),
         .i2 (i_d2),
         .i3 (i_d3),
-        .i_sel(i_sel),
-        .o_y  (o_y)
+        .i_sel (i_sel),
+        .o_y (o_y)
     );
 
     initial begin

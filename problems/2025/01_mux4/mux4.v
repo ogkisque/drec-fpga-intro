@@ -1,10 +1,10 @@
 module mux4 #(parameter WIDTH = 32
 )(
-    input  [WIDTH-1:0] i0,
-    input  [WIDTH-1:0] i1,
-    input  [WIDTH-1:0] i2,
-    input  [WIDTH-1:0] i3,
-    input  [1:0]       i_sel,
+    input [WIDTH-1:0] i0,
+    input [WIDTH-1:0] i1,
+    input [WIDTH-1:0] i2,
+    input [WIDTH-1:0] i3,
+    input [1:0] i_sel,
     output reg [WIDTH-1:0] o_y
 );
 
