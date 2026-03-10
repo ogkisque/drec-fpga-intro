@@ -20,7 +20,7 @@ end
 
 always begin
     #1;
-    $display("t=%0t data=%b", $time, data);
+    $display("[%0t] data=%b", $realtime, data);
 end
 
 endmodule

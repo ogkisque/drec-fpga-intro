@@ -30,9 +30,6 @@ module tb_shift_reg;
         i_load = 1'b0;
         i_data = 8'b00000000;
         i_bit  = 1'b0;
-
-        $display("t=%0t en=%b load=%b i_data=%b i_bit=%b | o_bit=%b",
-                 $time, i_en, i_load, i_data, i_bit, o_bit);
         #1
 
         i_en   = 1'b1;
@@ -55,8 +52,8 @@ module tb_shift_reg;
     always begin
         #1;
         @(posedge clk);
-        $display("t=%0t en=%b load=%b i_data=%b i_bit=%b | o_bit=%b",
-                 $time, i_en, i_load, i_data, i_bit, o_bit);
+        $display("[%0t] en=%b load=%b i_data=%b i_bit=%b | o_bit=%b",
+                 $realtime, i_en, i_load, i_data, i_bit, o_bit);
     end
 
 endmodule
