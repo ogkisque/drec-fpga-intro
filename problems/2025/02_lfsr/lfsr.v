@@ -1,6 +1,5 @@
 module lfsr (
-    input  wire       clk,
-    input  wire       i_en,
+    input wire clk,
     output wire [7:0] o_data
 );
 
@@ -11,9 +10,7 @@ module lfsr (
     assign o_data = data;
 
     always @(posedge clk) begin
-        if (i_en) begin
-            data <= {data[6:0], new_bit};
-        end
+        data <= {data[6:0], new_bit};
     end
 
 endmodule

@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module shift_reg_tb;
+module tb_shift_reg;
 
     reg clk = 1'b0;
     reg i_en;
