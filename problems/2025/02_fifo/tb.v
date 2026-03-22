@@ -6,6 +6,7 @@ module tb_fifo;
     localparam ADDR_WIDTH = 4;
 
     reg clk = 1'b0;
+    reg rst_n = 1'b1;
     reg i_wr_en;
     reg i_rd_en;
     reg [DATA_WIDTH-1:0] i_wr_data;
@@ -18,6 +19,7 @@ module tb_fifo;
         .ADDR_WIDTH(ADDR_WIDTH)
     ) fifo_mod (
         .clk     (clk),
+        .rst_n   (rst_n),
         .i_wr_en (i_wr_en),
         .i_rd_en (i_rd_en),
         .i_wr_data(i_wr_data),
@@ -33,11 +35,15 @@ module tb_fifo;
     initial begin
         $dumpvars;      /* Open for dump of signals */
         $display("Test started...");   /* Write to console */
+        rst_n = 1'b0;
+
+        #2
+        rst_n = 1'b1;
         i_wr_en   = 1'b0;
         i_rd_en   = 1'b0;
         i_wr_data = 8'h00;
 
-        #4;
+        #2;
         i_wr_en   = 1'b1;
         i_wr_data = 8'h11;
         #2;
