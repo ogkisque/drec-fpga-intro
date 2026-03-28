@@ -40,14 +40,12 @@ assign o_mmio_mask = i_mask;
 assign o_mmio_wren = i_wren && is_mmio;
 
 always @(*) begin
+    data = 32'hXXXXXXXX;
     if (is_mmio) begin
         data = i_mmio_data;
     end
     else if (is_dmem) begin
         data = i_dmem_data;
-    end
-    else begin
-        data = 32'hXXXXXXXX;
     end
 end
 

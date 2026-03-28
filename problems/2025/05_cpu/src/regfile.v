@@ -14,8 +14,8 @@ module reg_file (
 
     reg [31:0] data [31:0];
 
-    assign o_rd_data0 = data[i_rd_addr0];
-    assign o_rd_data1 = data[i_rd_addr1];
+    assign o_rd_data0 = (i_rd_addr0 == 0) ? 32'd0 : data[i_rd_addr0];
+    assign o_rd_data1 = (i_rd_addr1 == 0) ? 32'd0 : data[i_rd_addr1];
 
     always @(posedge clk) begin
         if (i_wr_en) begin
