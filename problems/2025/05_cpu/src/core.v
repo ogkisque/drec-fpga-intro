@@ -1,16 +1,17 @@
 module core(
-    input wire  clk,
-    input wire  rst_n,
-    input wire  [31:0] i_instr_data,
+    input  wire  clk,
+    input  wire  rst_n,
+    input  wire [31:0] i_instr_data,
     output wire [29:0] o_instr_addr,
     output wire [29:0] o_mem_addr,
     output wire [31:0] o_mem_data,
     output wire o_mem_we,
     output wire [3:0] o_mem_mask,
-    input wire  [31:0] i_mem_data
+    input  wire [31:0] i_mem_data
 );
 
-reg [31:0] pc;
+reg [29:0] pc;
+assign o_instr_addr = pc;
 
 wire [31:0] u_imm;
 wire [31:0] b_imm;
@@ -32,7 +33,7 @@ wire [4:0] rs2_addr;
 assign rs2_addr = i_instr_data[24:20];
 wire [4:0] rd_addr;
 assign rd_addr = i_instr_data[11:7];
-wire [31:0] rs1_data
+wire [31:0] rs1_data;
 wire [31:0] rs2_data;
 wire [31:0] wr_data;
 wire wr_en;
@@ -40,6 +41,21 @@ wire wr_en;
 wire [1:0] wb_sel;
 wire [1:0] alu_sel1;
 wire [1:0] alu_sel2;
+wire [3:0] alu_op;
+wire [2:0] cmp_op;
+wire branch;
+wire jump;
+wire branch_res;
+wire [31:0] alu_a;
+wire [31:0] alu_b;
+wire [31:0] alu_res;
+wire mem_write;
+wire mem_read;
+wire need_reg_write;
+wire [31:0] lsu_data;
+
+assign o_mem_we = mem_write;
+assign wr_en = need_reg_write && (rd_addr != 5'b0);
 
 reg_file reg_file (
     .clk        (clk),
@@ -52,18 +68,26 @@ reg_file reg_file (
     .i_wr_en    (wr_en)
 );
 
-wire branch_res;
+control_unit control_unit(
+    .i_instr            (i_instr_data),
+    .o_alu_op           (alu_op),
+    .o_alu_sel1         (alu_sel1),
+    .o_alu_sel2         (alu_sel2),
+    .o_need_reg_write   (need_reg_write),
+    .o_wb_sel           (wb_sel),
+    .o_cmp_op           (cmp_op),
+    .o_branch           (branch),
+    .o_jump             (jump),
+    .o_mem_write        (mem_write),
+    .o_mem_read         (mem_read)
+);
 
 branch_unit branch_unit (
     .i_a    (rs1_data),
-    .i_b    (rs1_data),
+    .i_b    (rs2_data),
     .cmp_op (cmp_op),
     .taken  (branch_res)
 );
-
-wire [31:0] alu_a;
-wire [31:0] alu_b;
-wire [31:0] alu_res;
 
 mux4 mux4_sel_alu_a (
     .i0     (rs1_data),
@@ -78,7 +102,7 @@ mux4 mux4_sel_alu_b (
     .i0     (rs2_data),
     .i1     (i_imm),
     .i2     (s_imm),
-    .i3     (pc),
+    .i3     ({pc, 2'b00}),
     .i_sel  (alu_sel2),
     .o_y    (alu_b)
 );
@@ -88,6 +112,41 @@ alu alu (
     .i_b   (alu_b),
     .i_op  (alu_op),
     .o_res (alu_res)
+);
+
+lsu lsu (
+    .i_mem_write (mem_write),
+    .i_mem_read (mem_read),
+    .i_funct3 (i_instr_data[14:12]),
+    .i_addr (alu_res),
+    .i_mem_data (i_mem_data),
+    .o_mem_mask (o_mem_mask),
+    .o_mem_data (o_mem_data),
+    .o_mem_addr (o_mem_addr),
+    .i_data     (rs2_data),
+    .o_data     (lsu_data)
+);
+
+wire [29:0] pc_next;
+assign pc_next = pc + 30'd1;
+wire taken = jump | (branch && branch_res);
+
+always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+        pc <= 30'd0;
+    end
+    else begin
+        pc <= taken ? alu_res >> 2 : pc_next;
+    end
+end
+
+mux4 mux4_sel_wb (
+    .i0     (alu_res),
+    .i1     (lsu_data),
+    .i2     ({pc_next, 2'b00}),
+    .i3     (u_imm),
+    .i_sel  (wb_sel),
+    .o_y    (wr_data)
 );
 
 endmodule

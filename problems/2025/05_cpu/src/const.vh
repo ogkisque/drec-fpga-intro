@@ -24,9 +24,11 @@
 `define F3_BLTU 3'b110
 `define F3_BGEU 3'b111
 
-`define F3_B    3'b000
-`define F3_H    3'b001
-`define F3_W    3'b010
+`define F3_B     3'b000
+`define F3_H     3'b001
+`define F3_W     3'b010
+`define F3_BU    3'b100
+`define F3_HU    3'b101
 
 `define F7_ADD  7'b0000000
 `define F7_SUB  7'b0100000
