@@ -41,7 +41,7 @@
 # Project-Wide Assignments
 # ========================
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output
-set_global_assignment -name LAST_QUARTUS_VERSION "23.1std.1 Lite Edition"
+set_global_assignment -name LAST_QUARTUS_VERSION "25.1std.0 Lite Edition"
 set_global_assignment -name SDC_FILE fpga.sdc
 set_global_assignment -name VERILOG_FILE fpga_top.v
 set_global_assignment -name VERILOG_FILE uart_rx.v
@@ -53,9 +53,9 @@ set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL
 # Pin & Location Assignments
 # ==========================
 set_location_assignment PIN_AA1 -to DS
-set_location_assignment PIN_Y2  -to OE
-set_location_assignment PIN_W1  -to SHCP
-set_location_assignment PIN_Y1  -to STCP
+set_location_assignment PIN_Y2 -to OE
+set_location_assignment PIN_W1 -to SHCP
+set_location_assignment PIN_Y1 -to STCP
 set_location_assignment PIN_V1 -to RXD
 set_location_assignment PIN_U1 -to TXD
 set_location_assignment PIN_T22 -to CLK
