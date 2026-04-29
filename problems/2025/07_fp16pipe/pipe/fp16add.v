@@ -39,48 +39,6 @@ module fp16add (
     input  [15:0]       i_b,
     output reg [15:0]   o_res
 );
-    reg        sa, sb;
-    reg [4:0]  ea, eb;
-    reg [9:0]  fa, fb;
-
-    reg a_is_sub,  b_is_sub;
-    reg a_is_inf,  b_is_inf;
-    reg a_is_nan,  b_is_nan;
-
-    always @(*) begin
-        sa = i_a[15];
-        ea = i_a[14:10];
-        fa = i_a[9:0];
-
-        sb = i_b[15];
-        eb = i_b[14:10];
-        fb = i_b[9:0];
-
-        a_is_sub  = (ea == 5'd0)  && (fa != 10'd0);
-        b_is_sub  = (eb == 5'd0)  && (fb != 10'd0);
-
-        a_is_inf  = (ea == 5'h1F) && (fa == 10'd0);
-        b_is_inf  = (eb == 5'h1F) && (fb == 10'd0);
-
-        a_is_nan  = (ea == 5'h1F) && (fa != 10'd0);
-        b_is_nan  = (eb == 5'h1F) && (fb != 10'd0);
-
-        if (!(a_is_nan || b_is_nan) &&
-            !(a_is_inf && b_is_inf && (sa != sb)) &&
-            !a_is_inf && b_is_inf) begin
-            if (a_is_sub) begin
-                ea = 5'd0;
-                fa = 10'd0;
-            end
-
-            if (b_is_sub) begin
-                eb = 5'd0;
-                fb = 10'd0;
-            end
-        end
-    end
-
-    ///////////////////////////////////////////////////
     reg        sa1, sb1;
     reg [4:0]  ea1, eb1;
     reg [9:0]  fa1, fb1;
@@ -98,19 +56,37 @@ module fp16add (
     reg [4:0]  e_big1, e_sml1;
     reg [10:0] m_big1, m_sml1;
 
-    always @(posedge clk) begin
-        sa1 <= sa;
-        sb1 <= sb;
-        ea1 <= ea;
-        eb1 <= eb;
-        a_is_sub1 <= a_is_sub;
-        b_is_sub1 <= b_is_sub;
-        a_is_inf1 <= a_is_inf;
-        b_is_inf1 <= b_is_inf;
-        a_is_nan1 <= a_is_nan;
-        b_is_nan1 <= b_is_nan;
-        fa1 <= fa;
-        fb1 <= fb;
+    always @(*) begin
+        sa1 = i_a[15];
+        ea1 = i_a[14:10];
+        fa1 = i_a[9:0];
+
+        sb1 = i_b[15];
+        eb1 = i_b[14:10];
+        fb1 = i_b[9:0];
+
+        a_is_sub1  = (ea1 == 5'd0)  && (fa1 != 10'd0);
+        b_is_sub1  = (eb1 == 5'd0)  && (fb1 != 10'd0);
+
+        a_is_inf1  = (ea1 == 5'h1F) && (fa1 == 10'd0);
+        b_is_inf1  = (eb1 == 5'h1F) && (fb1 == 10'd0);
+
+        a_is_nan1  = (ea1 == 5'h1F) && (fa1 != 10'd0);
+        b_is_nan1  = (eb1 == 5'h1F) && (fb1 != 10'd0);
+
+        if (!(a_is_nan1 || b_is_nan1) &&
+            !(a_is_inf1 && b_is_inf1 && (sa1 != sb1)) &&
+            !a_is_inf1 && b_is_inf1) begin
+            if (a_is_sub1) begin
+                ea1 = 5'd0;
+                fa1 = 10'd0;
+            end
+
+            if (b_is_sub1) begin
+                eb1 = 5'd0;
+                fb1 = 10'd0;
+            end
+        end
     end
 
     always @(*) begin

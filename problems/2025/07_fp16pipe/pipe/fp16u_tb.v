@@ -8,11 +8,10 @@ end
 
 wire [15:0] a, b, c, z;
 reg  [15:0] z1;
-reg  [15:0] z2;
 
-wire       z_sign = z2[15];
-wire [4:0] z_bexp = z2[14:10];
-wire [9:0] z_mant = z2[9:0];
+wire       z_sign = z1[15];
+wire [4:0] z_bexp = z1[14:10];
+wire [9:0] z_mant = z1[9:0];
 
 wire       c_sign = c[15];
 wire [4:0] c_bexp = c[14:10];
@@ -36,11 +35,10 @@ reg start = 1'b0;
 initial begin
     $readmemh("test.txt", test);
     @(posedge clk);
-    @(posedge clk);
     start <= 1'b1;
 end
 
-wire signed [14:0] diff = $signed(c[14:0]) - $signed(z2[14:0]);
+wire signed [14:0] diff = $signed(c[14:0]) - $signed(z1[14:0]);
 
 always @(*) begin
     if (z_bexp == 5'h0) // Zero/denormal
@@ -53,14 +51,13 @@ end
 
 always @(posedge clk) begin
     z1 <= z;
-    z2 <= z1;
 end
 
 always @(posedge clk) begin
     if (start) begin
         idx <= idx + 1;
         if (`DEBUG || !ok) begin
-            $display("[%d] %h %h -> %h z2=%h ok=%d", idx, a, b, c, z2, ok);
+            $display("[%d] %h %h -> %h z1=%h ok=%d", idx, a, b, c, z1, ok);
         end
         pass <= ok ? pass : 0;
         if (idx == `TEST_SIZE-1) begin
