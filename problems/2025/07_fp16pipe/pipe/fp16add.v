@@ -76,7 +76,7 @@ module fp16add (
 
         if (!(a_is_nan1 || b_is_nan1) &&
             !(a_is_inf1 && b_is_inf1 && (sa1 != sb1)) &&
-            !a_is_inf1 && b_is_inf1) begin
+            !a_is_inf1 && !b_is_inf1) begin
             if (a_is_sub1) begin
                 ea1 = 5'd0;
                 fa1 = 10'd0;
@@ -88,6 +88,9 @@ module fp16add (
             end
         end
     end
+
+    reg [4:0] shift;
+    reg [11:0] m_ext_big1, m_ext_sml1;
 
     always @(*) begin
         res_ready1 = 1'b1;
@@ -125,13 +128,21 @@ module fp16add (
                 e_sml1 = ea1;
                 m_sml1 = ma1;
             end
+
+            shift = e_big1 - e_sml1;
+
+            m_ext_big1 = {m_big1, 1'b0};
+            m_ext_sml1 = {m_sml1, 1'b0};
+
+            if (shift >= 5'd12)
+                m_ext_sml1 = 12'd0;
+            else
+                m_ext_sml1 = m_ext_sml1 >> shift;
         end
     end
     ///////////////////////////////////////////////////
     reg signed [6:0] exp_res;
-    reg [4:0] shift;
-
-    reg [11:0] m_ext_big, m_ext_sml;
+    reg [11:0] m_ext_big2, m_ext_sml2;
 
     reg [12:0] m_ext_sum;
     reg [11:0] m_ext_diff;
@@ -144,8 +155,7 @@ module fp16add (
     reg res_ready2;
 
     reg        s_big2, s_sml2;
-    reg [4:0]  e_big2, e_sml2;
-    reg [10:0] m_big2, m_sml2;
+    reg [4:0]  e_big2;
     reg sr;
 
     always @(posedge clk) begin
@@ -154,9 +164,8 @@ module fp16add (
         s_big2 <= s_big1;
         s_sml2 <= s_sml1;
         e_big2 <= e_big1;
-        e_sml2 <= e_sml1;
-        m_big2 <= m_big1;
-        m_sml2 <= m_sml1;
+        m_ext_big2 <= m_ext_big1;
+        m_ext_sml2 <= m_ext_sml1;
     end
 
     normal_mant normal_mant_mod (
@@ -171,18 +180,9 @@ module fp16add (
         end
         else begin
             exp_res = $signed({1'b0, e_big2});
-            shift = e_big2 - e_sml2;
-
-            m_ext_big = {m_big2, 1'b0};
-            m_ext_sml = {m_sml2, 1'b0};
-
-            if (shift >= 5'd12)
-                m_ext_sml = 12'd0;
-            else
-                m_ext_sml = m_ext_sml >> shift;
 
             if (s_big2 == s_sml2) begin
-                m_ext_sum = {1'b0, m_ext_big} + {1'b0, m_ext_sml};
+                m_ext_sum = {1'b0, m_ext_big2} + {1'b0, m_ext_sml2};
 
                 if (m_ext_sum[12]) begin
                     m_ext_norm = m_ext_sum[12:1];
@@ -193,7 +193,7 @@ module fp16add (
                 end
             end
             else begin
-                m_ext_diff = m_ext_big - m_ext_sml;
+                m_ext_diff = m_ext_big2 - m_ext_sml2;
 
                 if (m_ext_diff == 12'd0) begin
                     m_ext_norm = 12'd0;
