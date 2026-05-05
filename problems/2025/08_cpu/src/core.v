@@ -1,3 +1,5 @@
+`include "const.vh"
+
 module core(
     input  wire  clk,
     input  wire  rst_n,
@@ -117,11 +119,22 @@ alu alu (
     .o_res (alu_res)
 );
 
+reg [31:0] lsu_addr;
+always @(*) begin
+    lsu_addr = 32'd0;
+    if (mem_read) begin
+        lsu_addr = rs1_data + i_imm;
+    end
+    if (mem_write) begin
+        lsu_addr = rs1_data + s_imm;
+    end
+end
+
 lsu lsu (
     .i_mem_write (mem_write),
     .i_mem_read (mem_read),
     .i_funct3 (i_instr_data[14:12]),
-    .i_addr (alu_res),
+    .i_addr (lsu_addr),
     .i_mem_data (i_mem_data),
     .o_mem_mask (o_mem_mask),
     .o_mem_data (o_mem_data),
