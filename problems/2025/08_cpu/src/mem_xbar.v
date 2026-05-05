@@ -1,0 +1,58 @@
+module mem_xbar #(
+    parameter DATA_START = 0,
+    parameter DATA_LIMIT = 0,
+    parameter MMIO_START = 0,
+    parameter MMIO_LIMIT = 0
+)(
+    input wire         clk,
+    input wire  [29:0] i_addr,
+    input wire  [31:0] i_data,
+    input wire         i_wren,
+    input wire  [3:0]  i_mask,
+    output wire [31:0] o_data,
+    output wire [29:0] o_dmem_addr,
+    output wire [31:0] o_dmem_data,
+    output wire [3:0]  o_dmem_mask,
+    output wire        o_dmem_wren,
+    input wire  [31:0] i_dmem_data,
+    output wire [29:0] o_mmio_addr,
+    output wire [31:0] o_mmio_data,
+    output wire        o_mmio_wren,
+    output wire [3:0]  o_mmio_mask,
+    input wire  [31:0] i_mmio_data
+);
+
+reg [31:0] data;
+assign o_data = data;
+
+reg [29:0] addr_data;
+always @(posedge clk) begin
+    addr_data <= i_addr;
+end
+
+wire is_dmem;
+assign is_dmem = (DATA_START <= addr_data) && (addr_data < DATA_START + DATA_LIMIT);
+wire is_mmio;
+assign is_mmio = (MMIO_START <= addr_data) && (addr_data < MMIO_START + MMIO_LIMIT);
+
+assign o_dmem_addr = addr_data - DATA_START;
+assign o_dmem_data = i_data;
+assign o_dmem_mask = i_mask;
+assign o_dmem_wren = i_wren && is_dmem;
+
+assign o_mmio_addr = addr_data - MMIO_START;
+assign o_mmio_data = i_data;
+assign o_mmio_mask = i_mask;
+assign o_mmio_wren = i_wren && is_mmio;
+
+always @(*) begin
+    data = 32'hXXXXXXXX;
+    if (is_mmio) begin
+        data = i_mmio_data;
+    end
+    else if (is_dmem) begin
+        data = i_dmem_data;
+    end
+end
+
+endmodule
