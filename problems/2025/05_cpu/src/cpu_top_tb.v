@@ -33,8 +33,13 @@ cpu_top cpu_top(
 
 always @(posedge clk) begin
     if (o_mmio_wren)
+<<<<<<< HEAD
         $display("[%t] %m: mmio: [0x%h] <- %d (0x%h) (mask %b)", $realtime,
                 {o_mmio_addr, 2'b0}, o_mmio_data, o_mmio_data, o_mmio_mask);
+=======
+        $display("[%t] %m: mmio: [0x%h] <- %h (%b)", $realtime,
+                {o_mmio_addr, 2'b0}, o_mmio_data, o_mmio_mask);
+>>>>>>> f0772fb8eee153d1b8dda73a58d3b2583b015711
 end
 
 initial begin

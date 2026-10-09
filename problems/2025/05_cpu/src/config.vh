@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 `define IMEM_FILE_TXT   "samples/fib.txt"
+=======
+`define IMEM_FILE_TXT   "samples/fib_riscv.txt"
+>>>>>>> f0772fb8eee153d1b8dda73a58d3b2583b015711
 `define IMEM_ADDR_WIDTH 6
 
 `define DMEM_ADDR_WIDTH 5
